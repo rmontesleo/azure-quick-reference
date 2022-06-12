@@ -1,0 +1,16 @@
+# Avoid  specific IDE folder and files
+.vs
+.vscode
+.idea
+
+# Avoid .env files with credentials
+.env
+
+# Avoid specific files/folders of .NET projects
+bin
+obj
+appsettings.json
+
+# Avoid specific files/folders of Java projects
+*.class
+*.jar
