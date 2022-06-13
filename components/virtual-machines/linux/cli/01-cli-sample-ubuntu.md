@@ -28,12 +28,17 @@ az vm create \
 --verbose
 ```
 
+### This command generate the id_rsa id_rsa.pub keys
+
+
 ### List your virtual machines
 ```bash
 az vm list --output table
 ```
 
+
+
 ### Connect to the virtual machine
 ```bash
-ssh  vmadmin@<VIRTUAL_MACHINE_IP>
+ssh vmadmin@<VIRTUAL_MACHINE_IP>
 ```
