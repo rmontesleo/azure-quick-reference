@@ -1,4 +1,4 @@
-# Deploy Spring Application on Azure Virtual Machine
+# Deploy Spring Application and NGINX on Azure Virtual Machine
 
 ### Clone GitHub repository
 ```bash
@@ -39,13 +39,13 @@ az vm list-sizes --location east-us2 --output table | less
 ```bash
 az vm create \
 --resource-group springtodoapp-rg \
---name vm-linux-springapp \
+--name vm-linux-springapp-nginx \
 --image tidalmediainc:minecraft-java-ubuntu-20-minimal:minecraft-java-ubuntu-20-minimal:1.0.1 \
 --size "Standard_B1ms" \
 --public-ip-sku Standard \
 --admin-username vmadmin \
 --generate-ssh-keys \
---ssh-key-values ~/.ssh/springapp \
+--ssh-key-values ~/.ssh/springapp-nginx \
 --verbose
 ```
 
@@ -61,16 +61,6 @@ az vm open-port --port 80  \
 --name vm-linux-springapp \
 --priority 100 \
 --nsg-name webPort
-```
-
-
-### Open port 8080
-```bash
-az vm open-port --port 8080  \
---resource-group springtodoapp-rg \
---name vm-linux-springapp \
---priority 200 \
---nsg-name apiPort
 ```
 
 ---
@@ -95,23 +85,61 @@ curl localhost:8080
 curl localhost:8080/api/todoapp/swagger-ui.html
 ```
 
-
-### Test the api on port 8080 (client)
-```bash
-curl http://<VM_IP>:8080/api/todoapp/swagger-ui.html
-```
-
 ---
 
-### Redirect from 80 to 8080 (server)
+## Install nginx server
+
+### Update system
 ```bash
-sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+sudo apt-get -y update 
 ```
+
+### install nginx 
+```bash
+sudo apt-get -y install nginx
+```
+
+### edit configuration file
+```bash
+sudo vim /etc/nginx/sites-available/default
+```
+
+###
+```bash
+server {
+
+    ...
+    server_name <APPLICATION_NAME>.<DOMAIN>  www.<APPLICATION_NAME>.<DOMAIN>
+    location / {
+        proxy_pass http://localhost:<APPLICATION_PORT>;
+        proxy_http_version 1.1;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+    }
+}
+
+```
+
+
+### verify the nginx configuration is right
+```bash
+sudo nginx -t
+```
+
+### restart service
+```bash
+sudo service nginx restart
+```
+
+
+
 
 ### Test the api on port 80 (client)
 ```bash
 curl http://<VM_IP>/api/todoapp/swagger-ui.html
-```
+``` 
 
 ---
 

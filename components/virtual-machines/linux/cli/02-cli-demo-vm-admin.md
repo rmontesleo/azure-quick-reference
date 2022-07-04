@@ -2,21 +2,21 @@
 
 ## 1) Create the resource group and the virtual machine
 
-### 1.1) Create the resource group
+### 1.1) Create the resource group lnx-demo-vm-rg
 ```bash
-az group create --name democommands-rg --location eastus-2
+az group create --name lnx-demo-vm-rg --location eastus-2
 ```
 
 ### 1.2) Create the vm01
 ```bash
-az vm create --resource-group democommands-rg \
---location eastus-2 \
+az vm create --resource-group lnx-demo-vm-rg \
+--location eastus2 \
 --name vm01 \
 --image UbuntuLTS \
---public-ip-sku Standard
+--public-ip-sku Standard \
 --admin-username azuredeveloper \
 --generate-ssh-keys \
---ssh-key-values /home/leo/.ssh/vm01 \
+--ssh-key-values ~/.ssh/vm01 \
 --verbose
 ```
 
@@ -40,7 +40,7 @@ ssh azuredeveloper@<AZURE_VM01_PUBLIC_IP>
 
 ### 3.2) Connect to vm01 if you are using the another key
 ```bash
-ssh -i /home/leo/.ssh/vm01.private azuredeveloper@<AZURE_VM01_PUBLIC_IP>
+ssh -i /home/${USER}/.ssh/vm01.private azuredeveloper@<AZURE_VM01_PUBLIC_IP>
 ```
 
 ---
@@ -77,7 +77,7 @@ az vm list-sizes --location east-us2 --output table
 
 ### 6.1) Create a virtual machine vm02 with a different size of the default
 ```bash
-az vm create --resource-group democommands-rg \
+az vm create --resource-group  lnx-demo-vm-rg \
 --location eastus-2 \
 --name vm02 \
 --image UbuntuLTS \
@@ -115,23 +115,22 @@ az vm list-ip-addresses
 az vm list-ip-addresses --output table
 
 ### Get the ip of the vm01
-az vm list-ip-addresses --resource-group democommands-rg --name vm01 --output table
+az vm list-ip-addresses --resource-group  lnx-demo-vm-rg --name vm01 --output table
 ```
 
 ### 9 Get information of any virtual machine
 ```bash
+### get information of vm01 in the resource group lnx-demo-vm-rg
+az vm show --resource-group  lnx-demo-vm-rg --name vm01
 
-### get information of vm01 in the resource group democommands-rg
-az vm show --resource-group democommands-rg --name vm01
+### get information of vm01 in the resource group  lnx-demo-vm-rg, but only the admin username
+az vm show --resource-group  lnx-demo-vm-rg --name vm01 --query "osProfile.adminUsername"
 
-### get information of vm01 in the resource group democommands-rg, but only the admin username
-az vm show --resource-group democommands-rg --name vm01 --query "osProfile.adminUsername"
-
-### get information of vm01 in the resource group democommands-rg, but only the admin username in tsv format
-az vm show --resource-group democommands-rg --name vm01 --query "osProfile.adminUsername" -o tsv
+### get information of vm01 in the resource group  lnx-demo-vm-rg, but only the admin username in tsv format
+az vm show --resource-group  lnx-demo-vm-rg --name vm01 --query "osProfile.adminUsername" -o tsv
 
 ### get the admin username of the vm01 and assign the value to the local variable vmname
-vmname=$(az vm show --resource-group democommands-rg --name vm01 --query "osProfile.adminUsername" -o tsv)
+vmname=$(az vm show --resource-group  lnx-demo-vm-rg --name vm01 --query "osProfile.adminUsername" -o tsv)
 
 ### display the value of this variable
 echo $vmname
@@ -142,14 +141,14 @@ echo $vmname
 
 ## 10) stop your virtual machine
 ```bash
-az vm stop  --name vm2 --resource-group democommands-rg
+az vm stop  --name vm2 --resource-group  lnx-demo-vm-rg
 ```
 
 ---
 
 ## 11 delete your virtual machines
 ```bash
-az vm delete --name vm02 --resource-group democommands-rg
+az vm delete --name vm02 --resource-group  lnx-demo-vm-rg
 ```
 
 ---
@@ -173,7 +172,7 @@ curl localhost
 az vm open-port --help | less
 
 ### open the port 80 on vm01 (client)
-az vm open-port --port 80 --resource-group democommands-rg --name vm01 --verbose
+az vm open-port --port 80 --resource-group lnx-demo-vm-rg --name vm01 --verbose
 
 ### test on your own machine (client)
 curl http://<AZURE_VM01_PUBLIC_IP>

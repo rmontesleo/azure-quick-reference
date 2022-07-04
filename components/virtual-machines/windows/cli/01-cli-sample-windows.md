@@ -5,10 +5,10 @@
 az group create --name <RESOURCE_GROUP_NAME>  --location <YOUR_SELECTED_LOCATION>
 ```
 
-### Create a resource group call WinCliDemo01-rg
+### Create a resource group call wind-demo-vm-rg
 
 ```bash
-az group create --name WinCliDemo01-rg  --location eastus
+az group create --name wind-demo-vm-rg  --location eastus
 ```
 
 ### Generic way to create your VM 
