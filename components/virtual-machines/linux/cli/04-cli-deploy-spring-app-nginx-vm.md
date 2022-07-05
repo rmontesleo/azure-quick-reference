@@ -17,7 +17,7 @@ mvn clean package
 
 ### Create the resource Group
 ```bash
-az group create --name springtodoapp-rg
+az group create --name springtodoapp-rg --location eastus2
 ```
 
 ### See the available images related with java
@@ -45,37 +45,35 @@ az vm create \
 --public-ip-sku Standard \
 --admin-username vmadmin \
 --generate-ssh-keys \
---ssh-key-values ~/.ssh/springapp-nginx \
+--ssh-key-values ~/.ssh/azure/spring/springapp-nginx \
 --verbose
 ```
 
 ### upload jar file
 ```bash
-scp -i  ~/.ssh/springapp.private  target/springboot-todo-h2-api.jar vmadmin@<VM_IP>:/home/vmadmin
+scp -i  ~/.ssh/azure/spring/springapp-nginx.private  target/springboot-todo-h2-api.jar vmadmin@<VM_IP>:/home/vmadmin
 ```
 
 ### Open port 80
 ```bash
 az vm open-port --port 80  \
 --resource-group springtodoapp-rg \
---name vm-linux-springapp \
+--name vm-linux-springapp-nginx \
 --priority 100 \
 --nsg-name webPort
 ```
 
----
-
 
 ### Login to the virtual machine
 ```bash
-ssh -i  ~/.ssh/springapp.private vmadmin@<VM_IP>
+ssh -i  ~/.ssh/azure/spring/springapp.private vmadmin@<VM_IP>
 ```
 
-
+---
 
 ### Start java application (server)
 ```bash
-java -jar springboot-todo-h2-api.jar &
+java -jar springboot-todo-h2-api-iaas.jar &
 ```
 
 ### Test the api (server)
@@ -97,6 +95,11 @@ sudo apt-get -y update
 ### install nginx 
 ```bash
 sudo apt-get -y install nginx
+```
+
+### test nginx on the server
+```bash
+curl localhost
 ```
 
 ### edit configuration file
@@ -132,8 +135,7 @@ sudo nginx -t
 ```bash
 sudo service nginx restart
 ```
-
-
+---
 
 
 ### Test the api on port 80 (client)
@@ -141,17 +143,21 @@ sudo service nginx restart
 curl http://<VM_IP>/api/todoapp/swagger-ui.html
 ``` 
 
----
 
 ## See some information about your VM
 
-### See the ip of your vm
+### see the ip of all virtual machines
 ```bash
-az vm list-ip-addresses --resource-group springtodoapp-rg --name vm-linux-springapp --output table
+az vm list-ip-addresses
 ```
 
-### get information of vm-linux-springapp in the resource group springtodoapp-rg
+### See the ip of your vm
 ```bash
-az vm show --resource-group springtodoapp-rg --name vm-linux-springapp
+az vm list-ip-addresses --resource-group springtodoapp-rg --name vm-linux-springapp-nginx --output table
+```
+
+### get information of vm-linux-springapp-nginx in the resource group springtodoapp-rg
+```bash
+az vm show --resource-group springtodoapp-rg --name vm-linux-springapp-nginx
 ```
 
